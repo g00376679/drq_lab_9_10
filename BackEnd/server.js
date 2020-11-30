@@ -1,11 +1,13 @@
+// Server Setup local host 4000 
 const express = require('express')
 const app = express()
 const port = 4000
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const path = require('path');
 
-
+//to avoid cors error 
 app.use(cors());
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -15,14 +17,19 @@ app.use(function (req, res, next) {
     next();
 });
 
+//set up configuration these will tell where to find important files
+app.use(express.static(path.join(__dirname,'../build')));
+app.use('/static', express.static(path.join(__dirname, 'build//static')));
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
+//Connection added with mongoDb
+const myConnectionString = 'mongodb+srv://admin:admin2@cluster0.jnlag.mongodb.net/movies?retryWrites=true&w=majority';
 
-const strConnection = 'mongodb+srv://admin:admin@cluster0.hrgmz.mongodb.net/MyFilms?retryWrites=true&w=majority';
-mongoose.connect(strConnection, {useNewUrlParser: true});
+mongoose.connect(myConnectionString, { useNewUrlParser: true });
 
 const Schema = mongoose.Schema;
 const movieSchema = new Schema({
@@ -30,8 +37,8 @@ const movieSchema = new Schema({
     Year:String,
     Poster:String
 })
-
-const movieModel = mongoose.model('film', movieSchema);
+//create model for database
+const movieModel = mongoose.model('movies', movieSchema);
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
@@ -55,7 +62,7 @@ app.get('/api/movies/:id',(req, res)=>{
         res.json(data);
     })
 })
-
+//delete method 
 app.delete('/api/movies/:id', (req, res)=>{
     console.log(req.params.id);
 
@@ -78,6 +85,10 @@ app.post('/api/movies', (req, res) => {
     .catch();
 
     res.send('Data Recieved!');
+})
+//this method will return html front end file 
+app.get('*',(req,res)=>{
+    res.sendFile(path.join(__dirname+'/../build/index.html'));
 })
 
 app.listen(port, () => {
