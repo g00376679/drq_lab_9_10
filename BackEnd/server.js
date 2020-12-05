@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 //Connection added with mongoDb
-const myConnectionString = 'mongodb+srv://admin:admin2@cluster0.jnlag.mongodb.net/movies?retryWrites=true&w=majority';
+const myConnectionString = 'mongodb+srv://admin:Mongodb?@cluster0.xvk7v.mongodb.net/<dbname>?retryWrites=true&w=majority';
 
 mongoose.connect(myConnectionString, { useNewUrlParser: true });
 
